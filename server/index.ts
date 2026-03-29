@@ -13,23 +13,29 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Routes
+  // Health check (important for testing)
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
   });
 
+  // Routes
   app.get("/api/demo", handleDemo);
   app.use("/api/auth", authRouter);
   app.use("/api/bookings", bookingsRouter);
 
+  // ✅ SAFE fallback (NO wildcard crash)
+  app.use((req, res) => {
+    res.status(404).json({ message: "Route not found" });
+  });
+
   return app;
 }
 
-// 👇 ADD THIS PART
+// Start server
 const app = createServer();
 
-const PORT: number = Number(process.env.PORT) || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
