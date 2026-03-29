@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or mysql/sqlite
+  url      = env("DATABASE_URL")
+}
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hashed version
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  eventTypeId   String
+  eventTypeName String
+  bookerName    String
+  bookerEmail   String
+  bookedAt      DateTime @default(now())
+  scheduledFor  DateTime
+  duration      Int      // in minutes
+  meetingType   String
+  meetingUrl    String?
+  status        String   @default("confirmed") // "confirmed" | "cancelled"
+}
+
+model EmailLog {
+  id        String   @id @default(uuid())
+  to        String
+  subject   String
+  body      String
+  type      String   // "confirmation" | "cancellation"
+  bookingId String?
+  sentAt    DateTime @default(now())
+}
