@@ -13,14 +13,24 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Example API routes
+  // Routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
   });
+
   app.get("/api/demo", handleDemo);
   app.use("/api/auth", authRouter);
   app.use("/api/bookings", bookingsRouter);
 
   return app;
 }
+
+// 👇 ADD THIS PART
+const app = createServer();
+
+const PORT: number = Number(process.env.PORT) || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
